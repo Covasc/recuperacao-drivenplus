@@ -46,8 +46,8 @@ const Plans = styled.div`
     flex-direction: column;
     width: 100%;
     align-items: center;
-    padding: 0 42px;
-    font-family: 'Lexend Deca';
+    padding: 0 38px;
+    font-family: 'Roboto', sans-serif;
     color: white;
 
     h1 {

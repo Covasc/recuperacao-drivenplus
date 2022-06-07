@@ -21,7 +21,7 @@ const [ userData, setUserData ] = useState({});
                     <Route path='/' element={<Login />}/>
                     <Route path='/signin' element={<SignIn />}/>
                     <Route path='/subscriptions' element={<Subscriptions />}/>
-                    <Route path='home' element={<Home />}/>
+                    <Route path='/home' element={<Home />}/>
                     <Route path='/subscriptions/:planID' element={<PlanInfo />} />
                 </Routes>
             </BrowserRouter>

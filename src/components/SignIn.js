@@ -83,7 +83,7 @@ const Logon = styled.div`
         cursor: pointer;
         font-size: 14px;
         color: white;
-        font-family: 'Lexend Deca';
+        font-family: 'Roboto', sans-serif;
         text-decoration: underline;
     }
 `

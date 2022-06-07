@@ -8,22 +8,37 @@ import UserContext from '../contexts/UserContext';
 
 export default function PlanInfo () {
 
-    const { userData } = useContext(UserContext);
+    const { userData, setUserData } = useContext(UserContext);
     const [planInfo, setPlanInfo] = useState({});
     const [active, setActive] = useState(false);
-    const [entry, setEntry] = useState({membershipId:undefined, cardName:"", cardNumber:"", securityNumber:undefined, expirationDate:""})
+    const [entry, setEntry] = useState({});
     const { image, name, perks, price } = planInfo;
     const { planID } = useParams();
     const navigate = useNavigate();
     const planURL = `https://mock-api.driven.com.br/api/v4/driven-plus/subscriptions/memberships/${planID}`;
+    const buyURL = 'https://mock-api.driven.com.br/api/v4/driven-plus/subscriptions';
 
     useEffect( () => {
         const config = { headers: {Authorization:`Bearer ${userData.token}`} };
         const promisse = axios.get(planURL, config);
         promisse.then((response) => {
             setPlanInfo(response.data);
+            setEntry({...entry, membershipId: response.data.id});
         });
     }, [] );
+
+    function sendObject () {
+        const config = { headers: {Authorization:`Bearer ${userData.token}`} };
+        const promisse = axios.post(buyURL, entry, config);
+        promisse.then((response) => {
+            // ADRIANO: setting Context for content show on first buy
+            setUserData({...userData, membership: response.data.membership});
+            navigate('/home');
+        });
+        promisse.catch(() => {
+            alert("Dados inválidos. Verifique a entrada e tente novamente")
+        });
+    }
 
     return (
         <Plan>
@@ -45,7 +60,7 @@ export default function PlanInfo () {
                 />
                 <span> Benefícios:</span>
                 <ol>
-                    {perks?.map( (perk, index) => (
+                    {perks?.map( (perk) => (
                         <li key={ perk.id }>{perk.title === "Solicitar brindes" ? `Brindes exclusivos` : perk.title }</li>
                     ) )}
                 </ol>
@@ -59,11 +74,27 @@ export default function PlanInfo () {
                 <span> Preço:</span>
                 <p>{`R$ ${price} cobrados mensalmente`}</p>
             </div>
-            <input type='text' placeholder='Nome impresso no cartão'></input>
-            <input type='text' placeholder='Digitos do cartão'></input>
+            <input 
+                type='text' 
+                placeholder='Nome impresso no cartão' 
+                onChange={(e) => setEntry({...entry, cardName: e.target.value})} value={entry.cardName}>
+            </input>
+            <input 
+                type='text' 
+                placeholder='Digitos do cartão'
+                onChange={(e) => setEntry({...entry, cardNumber: e.target.value})} value={entry.cardNumber}>
+            </input>
             <Security>
-                <input type='number' placeholder='Código de segurança'></input>
-                <input type='text' placeholder='Validade'></input>
+                <input 
+                    type='text' 
+                    placeholder='Código de segurança'
+                    onChange={(e) => setEntry({...entry, securityNumber: Number(e.target.value)})} value={entry.securityNumber}>
+                </input>
+                <input 
+                    type='text' 
+                    placeholder='Validade'
+                    onChange={(e) => setEntry({...entry, expirationDate: e.target.value})} value={entry.expirationDate}>
+                </input>
             </Security>
             <button onClick={() => setActive(true)} >ASSINAR</button>
             <Confirm active={active}>
@@ -71,7 +102,7 @@ export default function PlanInfo () {
                     <h2>{`Tem certeza que deseja assinar o plano ${name} (R$ ${price})?`}</h2>
                     <div>
                         <button onClick={() => setActive(false)}>Não</button>
-                        <button>SIM</button>
+                        <button onClick={sendObject} >SIM</button>
                     </div>
                 </div>
                 <button className='closeIcon' onClick={() => setActive(false)}>
@@ -95,7 +126,7 @@ const Confirm = styled.div`
     position: absolute;
     top: 0;
     left: 0;
-    padding: 42px;
+    padding: 38px;
     background: rgba(0, 0, 0, 0.7);
 
     h2 {
@@ -153,9 +184,10 @@ const Plan = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
     padding: 0 42px;
     margin-top: 24px;
-    font-family: 'Lexend Deca';
+    font-family: 'Roboto', sans-serif;
     color: white;
 
     h1 {
