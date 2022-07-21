@@ -39,7 +39,7 @@ export default function Login () {
             <input type='email' placeholder='E-mail' onChange={(e) => setEntry({...entry ,email: e.target.value})} value={entry.email}></input>
             <input type='password' placeholder='Senha' onChange={(e) => setEntry({...entry, password: e.target.value})} value={entry.password}></input>
             <button onClick={sendObject}> { disable === false ? "ENTRAR" : <ThreeDots color="white" height={80} width={80} />} </button>
-            <a onClick={() => navigate("/signin")}>Não possui uma conta? Cadastre-se!</a>
+            <p onClick={() => navigate("/signin")}>Não possui uma conta? Cadastre-se!</p>
         </Logon>
     )
 }
@@ -86,11 +86,15 @@ const Logon = styled.div`
         border: 0px none;
     }
 
-    a {
+    p {
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 14px;
         color: white;
         font-family: 'Roboto', sans-serif;
         text-decoration: underline;
+        text-align: center;
     }
 `
